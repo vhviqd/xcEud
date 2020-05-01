@@ -1,0 +1,12 @@
+server:
+  #这里每一个服务的 端口号不能重复
+  port: 44001
+spring:
+  application:
+    name: test-rabbitmq-consumer
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtualHost: /
