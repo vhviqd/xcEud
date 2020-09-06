@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Created by admin on 2018/2/6.
+ * 提供页面静态化的表： 对应mongoDB
  */
 @Data
 @ToString
@@ -16,8 +17,14 @@ import java.util.List;
 public class CmsConfig {
 
     @Id
-    private String id;
+    private String id; //主键
+    /**
+     * 数据模型名称
+     */
     private String name;
+    /**
+     * 数据模型项目
+     */
     private List<CmsConfigModel> model;
 
     public void setId(String id) {

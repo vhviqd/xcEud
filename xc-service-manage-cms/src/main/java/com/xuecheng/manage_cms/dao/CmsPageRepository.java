@@ -17,7 +17,13 @@ public interface CmsPageRepository extends MongoRepository<CmsPage,String> {
      */
     CmsPage findByPageName(String pageName);
 
-    //根据页面名称、站点id、页面访问路径查询
+    /**
+     * 根据站点id、站点名称、站点路径来查询站点信息
+     * @return
+     * @param siteId
+     * @param pageName
+     * @param pageWebPath
+     */
     CmsPage findByPageNameAndSiteIdAndPageWebPath(String pageName,String siteId,String
             pageWebPath);
 

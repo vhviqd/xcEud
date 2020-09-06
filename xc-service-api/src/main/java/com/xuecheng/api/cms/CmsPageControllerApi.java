@@ -26,16 +26,18 @@ public interface CmsPageControllerApi {
 
     //新增页面
     @ApiOperation("新增页面")
+    @ApiImplicitParams({@ApiImplicitParam(name="cmsPage",value = "请提交json形式的页面数据",required=true,paramType="CmsPage",dataType="CmsPage"),
+})
     public CmsPageResult add(CmsPage cmsPage);
 
     @ApiOperation("根据页面ID查询页面信息")
-    public CmsPage findById(String id);
+    public CmsPageResult  cmsPageQueryById(String id);
 
     @ApiOperation("修改页面")
     public CmsPageResult edit(String id, CmsPage cmsPage);
 
     @ApiOperation("删除页面")
-    public ResponseResult delete(String id);
+    public ResponseResult deleteCmsPage(String id);
 
     @ApiOperation("页面发布")
     public ResponseResult post(String pageId);

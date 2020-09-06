@@ -3,19 +3,22 @@ package com.xuecheng.manage_cms.service;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.CmsSite;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
+import com.xuecheng.framework.domain.cms.response.CmsCode;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.QueryResult;
+import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
 import com.xuecheng.manage_cms.dao.CmsSiteRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Description: cms服务层
@@ -31,7 +34,7 @@ public class CmsPageService {
     private CmsSiteRepository cmsSiteRepository;
 
     /**
-     * 页面查询
+     * 页面查询： 指定站点id、模板id、 别名模糊查询
      *
      * @param page
      * @param size
@@ -67,7 +70,7 @@ public class CmsPageService {
         Page<CmsPage> all = cmsPageRepository.findAll(example, pageable);
         long totalElements = all.getTotalElements();
 
-        //组装反正对象
+        //组装对
         QueryResult queryResult = new QueryResult();
         queryResult.setTotal(totalElements);
         queryResult.setList(all.getContent());
@@ -85,18 +88,94 @@ public class CmsPageService {
         return result;
     }
 
+
+    /**
+     * 添加页面
+     * @param cmsPage
+     * @return
+     */
     public CmsPageResult add(CmsPage cmsPage) {
 
-        //校验是否存在
+        if(null == cmsPage){
+
+            return new CmsPageResult(CommonCode.FAIL,cmsPage);
+        }
+
+        //验证数据唯一性
         CmsPage page = cmsPageRepository.findByPageNameAndSiteIdAndPageWebPath(cmsPage.getPageName(), cmsPage.getSiteId(), cmsPage.getPageWebPath());
 
-        Assert.isNull(page,"该页面已经存在");
+        if(null != page){
+            //自定义异常： 页面已存在
+            ExceptionCast.cast(CmsCode.CMS_ADDPAGE_EXISTSNAME);
+        }
 
-        cmsPage.setPageId(null);//添加页面主键由spring data 自动生成
+
+        //添加页面主键由spring data 自动生成
+        cmsPage.setPageId(null);
         cmsPageRepository.save(cmsPage);
 
-        CmsPageResult cmsPageResult = new CmsPageResult(CommonCode.SUCCESS,cmsPage);
-        return cmsPageResult;
+        return new CmsPageResult(CommonCode.SUCCESS,cmsPage);
+
+    }
+
+    /**
+     * 根据id获取页面数据
+     */
+    public CmsPage cmsPageQueryById(String id) {
+        Optional<CmsPage> optional = cmsPageRepository.findById(id);
+        if (optional.isPresent()) {
+            CmsPage cmsPage = optional.get();
+            return cmsPage;
+        }
+        return null;
+    }
+
+    /**
+     * 修改页面数据
+     */
+    public CmsPageResult updateCmsPage(String id, CmsPage cmsPage) {
+        //判断该页面是否存在
+        CmsPage one = this.cmsPageQueryById(id);
+
+        if (one != null) {
+            //修改数据为了安全性，这里还是建议每个字段单独设置
+            //更新模板id
+            one.setTemplateId(cmsPage.getTemplateId());
+            //更新所属站点
+            one.setSiteId(cmsPage.getSiteId());
+            //更新页面别名
+            one.setPageAliase(cmsPage.getPageAliase());
+            //更新页面名称
+            one.setPageName(cmsPage.getPageName());
+            //更新访问路径
+            one.setPageWebPath(cmsPage.getPageWebPath());
+            //更新物理路径
+            one.setPagePhysicalPath(cmsPage.getPagePhysicalPath());
+            CmsPage save = cmsPageRepository.save(one);
+
+            if(save != null){
+                return new CmsPageResult(CommonCode.SUCCESS, save);
+            }
+        }
+        return new CmsPageResult(CommonCode.FAIL, cmsPage);
+    }
+
+    /**
+     * 删除页面
+     * @param id
+     * @return
+     */
+    public ResponseResult deleteCmsPage(String id) {
+        Optional<CmsPage> optional = cmsPageRepository.findById(id);
+        if(optional.isPresent()){
+            //删除并返回成功
+            cmsPageRepository.deleteById(id);
+            return new ResponseResult(CommonCode.SUCCESS);
+        }
+        return new ResponseResult(CommonCode.FAIL);
+
+
+
 
     }
 }

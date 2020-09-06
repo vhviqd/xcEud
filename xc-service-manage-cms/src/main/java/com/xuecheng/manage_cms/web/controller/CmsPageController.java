@@ -5,6 +5,7 @@ import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
 import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
+import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.QueryResult;
 import com.xuecheng.framework.model.response.ResponseResult;
@@ -56,19 +57,44 @@ public class CmsPageController implements CmsPageControllerApi {
         return result;
     }
 
+    /**
+     * 根据id获取页面数据
+     * @param id
+     * @return
+     */
     @Override
-    public CmsPage findById(String id) {
-        return null;
+    @GetMapping("/getPage/{id}")
+    public CmsPageResult  cmsPageQueryById(@PathVariable("id") String id) {
+        CmsPage cmsPage = cmsPageService.cmsPageQueryById(id);
+        if(null != cmsPage){
+            return new CmsPageResult(CommonCode.SUCCESS,cmsPage);
+        }
+        return new CmsPageResult(CommonCode.FAIL,null);
     }
 
+    /**
+     * 修改页面
+     * @param id
+     * @param cmsPage
+     * @return
+     */
     @Override
-    public CmsPageResult edit(String id, CmsPage cmsPage) {
-        return null;
+    @PutMapping("/edit/{id}")
+    public CmsPageResult edit(@PathVariable("id") String id, @RequestBody CmsPage cmsPage) {
+        CmsPageResult cmsPageResult = this.cmsPageQueryById(id);
+        //调用编辑接口
+        return cmsPageService.updateCmsPage(id, cmsPage);
     }
 
+    /**
+     * 删除页面
+     * @param id
+     * @return
+     */
     @Override
-    public ResponseResult delete(String id) {
-        return null;
+    @DeleteMapping("/delete/{id}")
+    public ResponseResult deleteCmsPage(@PathVariable("id") String id) {
+        return cmsPageService.deleteCmsPage(id);
     }
 
     @Override

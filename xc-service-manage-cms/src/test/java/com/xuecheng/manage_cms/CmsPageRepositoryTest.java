@@ -1,7 +1,9 @@
 package com.xuecheng.manage_cms;
 
+import com.alibaba.fastjson.JSON;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
+import com.xuecheng.manage_cms.service.CmsPageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ public class CmsPageRepositoryTest {
 
     @Autowired
     CmsPageRepository cmsPageRepository;
+    @Autowired
+    CmsPageService cmsPageService;
 
     /**
      * 分页查询
@@ -77,5 +81,46 @@ public class CmsPageRepositoryTest {
         System.out.println(cmsPage);
     }
 
+    /**
+     * 自定义条件查询
+     * 指定站点id、模板id、 别名模糊查询
+     */
+    @Test
+    public void testDiyFindAll(){
+        //精确匹配条件值
+        CmsPage cmsPage = new CmsPage();
+        cmsPage.setSiteId("5a751fab6abb5044e0d19ea1");
+        cmsPage.setTemplateId("5a925be7b00ffc4b3c1578b5");
+
+        //模糊匹配条件： 页面别名
+        cmsPage.setPageAliase("预览");
+
+        //条件匹配器,用于模糊匹配   使用contains进行模糊匹配
+        ExampleMatcher matching = ExampleMatcher.matching().withMatcher("pageAliase",ExampleMatcher.GenericPropertyMatchers.contains());
+
+
+        //条件查询实例
+        Example<CmsPage> example = Example.of(cmsPage, matching);
+
+        //分页参数
+        int page = 0;
+        int size = 20;
+        Pageable pageable = PageRequest.of(page,size);
+
+        //调用dao
+        Page<CmsPage> all = cmsPageRepository.findAll(example, pageable);
+        List<CmsPage> content = all.getContent();
+        System.out.println(JSON.toJSONString(content));
+    }
+
+
+    @Test
+    public void testAdd(){
+        CmsPage cmsPage = new CmsPage();
+        cmsPage.setPageName("index.html");
+        cmsPage.setSiteId("5a751fab6abb5044e0d19ea1");
+        cmsPage.setPageWebPath("/index.html");
+        cmsPageService.add(cmsPage);
+    }
 
 }

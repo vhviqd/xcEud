@@ -37,27 +37,4 @@ public class ResponseResult implements Response {
         return new ResponseResult(CommonCode.FAIL);
     }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
 }

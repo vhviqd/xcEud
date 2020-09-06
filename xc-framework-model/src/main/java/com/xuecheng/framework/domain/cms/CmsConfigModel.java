@@ -11,49 +11,23 @@ import java.util.Map;
 @Data
 @ToString
 public class CmsConfigModel {
+    //主键
     private String key;
+    /**
+     * 项目名称
+     */
     private String name;
+    /**
+     * 项目url
+     */
     private String url;
+    /**
+     * 项目复杂值
+     */
     private Map mapValue;
+    /**
+     * 项目简单值
+     */
     private String value;
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public void setMapValue(Map mapValue) {
-        this.mapValue = mapValue;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public Map getMapValue() {
-        return mapValue;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }
